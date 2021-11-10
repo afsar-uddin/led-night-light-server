@@ -21,10 +21,18 @@ async function ledNightLight() {
 
         const database = client.db('LedNightLight');
         const bannerCollection = database.collection("banner");
+        const productCollection = database.collection("products");
 
         // GET BANNER API
         app.get('/banner', async (req, res) => {
             const cursor = bannerCollection.find({});
+            const bannerArray = await cursor.toArray();
+            res.json(bannerArray);
+        });
+
+        // GET PRODUCTS API
+        app.get('/products', async (req, res) => {
+            const cursor = productCollection.find({});
             const bannerArray = await cursor.toArray();
             res.json(bannerArray);
         });
