@@ -123,7 +123,13 @@ async function ledNightLight() {
             res.json(result);
         });
 
-
+        // SINGLE PRODUCT DELETE API 
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const singleProduct = await productCollection.deleteOne(query);
+            res.send(singleProduct);
+        });
 
 
 
