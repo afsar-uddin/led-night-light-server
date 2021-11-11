@@ -24,6 +24,7 @@ async function ledNightLight() {
         const bannerCollection = database.collection("banner");
         const productCollection = database.collection("products");
         const orderCollection = database.collection("orders");
+        const reviewCollection = database.collection("reviews");
 
         // GET BANNER API
         app.get('/banner', async (req, res) => {
@@ -70,18 +71,26 @@ async function ledNightLight() {
             res.json(orderArray);
         });
 
-
-
-
+        // GET REVIEW API
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewCollection?.find({});
+            const reviewArray = await cursor.toArray();
+            res.json(reviewArray);
+        });
 
         // POST API FOR ORDER PLACE
         app.post('/orders', async (req, res) => {
-            const newUser = req.body;
-            const result = await orderCollection.insertOne(newUser);
+            const newOrder = req.body;
+            const result = await orderCollection.insertOne(newOrder);
             res.json(result)
         });
 
-
+        // POST API FOR REVIEW PLACE
+        app.post('/reviews', async (req, res) => {
+            const newReview = req.body;
+            const result = await reviewCollection.insertOne(newReview);
+            res.json(result)
+        });
 
         // ORDER SINGLE API
         app.get('/orders/:id', async (req, res) => {
@@ -105,8 +114,6 @@ async function ledNightLight() {
             const result = await orderCollection.updateOne(filter, updateDoc)
             res.send(result)
         });
-
-
 
         // ORDERED PRODUCT REMOVE
         app.delete('/orders/:id', async (req, res) => {
