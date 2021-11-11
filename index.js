@@ -23,7 +23,7 @@ async function ledNightLight() {
         const database = client.db('LedNightLight');
         const bannerCollection = database.collection("banner");
         const productCollection = database.collection("products");
-        const myOrderCollection = database.collection("myorders");
+        const orderCollection = database.collection("orders");
 
         // GET BANNER API
         app.get('/banner', async (req, res) => {
@@ -47,29 +47,79 @@ async function ledNightLight() {
             res.send(singleProduct);
         });
 
-        // POST API FOR ORDER PLACE
-        app.post('/myorders', async (req, res) => {
-            const newUser = req.body;
-            const result = await myOrderCollection.insertOne(newUser);
-            res.json(result)
+        // ADD API FOR PRODUCT
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            const result = await productCollection.insertOne(product);
+            res.json(result);
         });
 
         // USER EMAIL WISE FILTER
-        app.get('/myorders', async (req, res) => {
+        /* app.get('/orders', async (req, res) => {
             const email = req.query.email;
             const query = { email: email };
-            const cursor = myOrderCollection.find(query)
+            const cursor = orderCollection.find(query)
             const order = await cursor.toArray()
             res.json(order);
+        });*/
+
+        // GET ORDERS API
+        app.get('/orders', async (req, res) => {
+            const cursor = orderCollection?.find({});
+            const orderArray = await cursor.toArray();
+            res.json(orderArray);
         });
 
-        // ORDERED PRODUCT REMOVE
-        app.delete('/myorders/:id', async (req, res) => {
+
+
+
+
+        // POST API FOR ORDER PLACE
+        app.post('/orders', async (req, res) => {
+            const newUser = req.body;
+            const result = await orderCollection.insertOne(newUser);
+            res.json(result)
+        });
+
+
+
+        // ORDER SINGLE API
+        app.get('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const result = await myOrderCollection.deleteOne(query);
+            const findStatus = await orderCollection.findOne(query);
+            res.send(findStatus);
+        });
+
+        // UPDATE PRODUCT STATUS
+        app.put('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedStatus = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    status: updatedStatus.status,
+                    title: updatedStatus.title
+                },
+            };
+            const result = await orderCollection.updateOne(filter, updateDoc)
+            res.send(result)
+        });
+
+
+
+        // ORDERED PRODUCT REMOVE
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
             res.json(result);
-        })
+        });
+
+
+
+
+
     }
     finally {
         // await client.close();
