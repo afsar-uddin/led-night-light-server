@@ -62,6 +62,14 @@ async function ledNightLight() {
             const order = await cursor.toArray()
             res.json(order);
         });
+
+        // ORDERED PRODUCT REMOVE
+        app.delete('/myorders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await myOrderCollection.deleteOne(query);
+            res.json(result);
+        })
     }
     finally {
         // await client.close();
