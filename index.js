@@ -25,6 +25,7 @@ async function ledNightLight() {
         const productCollection = database.collection("products");
         const orderCollection = database.collection("orders");
         const reviewCollection = database.collection("reviews");
+        const usersCollection = database.collection('users')
 
         // GET BANNER API
         app.get('/banner', async (req, res) => {
@@ -130,6 +131,44 @@ async function ledNightLight() {
             const singleProduct = await productCollection.deleteOne(query);
             res.send(singleProduct);
         });
+
+        // ADMIN FILTER
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            let isAdmin = false;
+            if (user?.role === 'admin') {
+                isAdmin = true;
+            }
+            res.json({ admin: isAdmin })
+        });
+
+        // USERS POST
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.json(result);
+        });
+
+        // GOOGLE SIGN IN USER CREATE 
+        app.put('/users', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const options = { upsert: true };
+            const updateDoc = { $set: user };
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
+        });
+
+        // HANDLE ADMIN ROLE
+        app.put('/users/admin', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const updateDoc = { $set: { role: 'admin' } };
+            const result = await usersCollection.updateOne(filter, updateDoc);
+            res.json(result);
+        })
 
 
 
