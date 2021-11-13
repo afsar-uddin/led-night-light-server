@@ -8,6 +8,7 @@ const port = process.env.PORT || 4000
 
 // MIDDLEWARE
 app.use(cors());
+
 // ACCESS TO SEND OF BODY DATA
 app.use(express.json())
 
