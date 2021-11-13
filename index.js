@@ -1,5 +1,4 @@
 const { MongoClient } = require('mongodb');
-
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -9,7 +8,7 @@ const port = process.env.PORT || 4000
 
 // MIDDLEWARE
 app.use(cors());
-// access to send of body data
+// ACCESS TO SEND OF BODY DATA
 app.use(express.json())
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.cmhhb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -55,15 +54,6 @@ async function ledNightLight() {
             const result = await productCollection.insertOne(product);
             res.json(result);
         });
-
-        // USER EMAIL WISE FILTER
-        /* app.get('/orders', async (req, res) => {
-            const email = req.query.email;
-            const query = { email: email };
-            const cursor = orderCollection.find(query)
-            const order = await cursor.toArray()
-            res.json(order);
-        });*/
 
         // GET ORDERS API
         app.get('/orders', async (req, res) => {
